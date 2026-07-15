@@ -29,6 +29,7 @@ export function buildGraph(files) {
     id: f.name,
     label: f.name,
     type: 'file',
+    lastModified: f.lastModified ?? null,
   }));
 
   const edges = [];

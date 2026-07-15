@@ -51,6 +51,12 @@ export default function Home() {
       const formData = new FormData();
       repoFiles.forEach((file) => formData.append('files', file));
 
+      // Har file ka OS-level "last modified" timestamp bhi bhejte hain,
+      // same order mein jis order files upar append hui — backend isse
+      // graph ke nodes ke saath zip kar dega (routes/analyze.js dekho).
+      const lastModifiedTimes = repoFiles.map((file) => file.lastModified);
+      formData.append('lastModifiedTimes', JSON.stringify(lastModifiedTimes));
+
       const response = await fetch('http://localhost:5000/api/analyze', {
         method: 'POST',
         body: formData,
@@ -67,6 +73,16 @@ export default function Home() {
       setAnalyzing(false);
     }
   };
+
+  // Graph ke saare nodes mein se sabse recent "lastModified" waala node
+  // dhoondte hain — GraphView isko halki glow dega.
+  const mostRecentNodeId = graph?.nodes?.length
+    ? graph.nodes.reduce((latest, node) => {
+        if (!node.lastModified) return latest;
+        if (!latest || node.lastModified > latest.lastModified) return node;
+        return latest;
+      }, null)?.id ?? null
+    : null;
 
   const loadDemoGraph = () => {
     setGraph(DEMO_GRAPH);
@@ -171,6 +187,7 @@ export default function Home() {
               selectedNode={selectedNode}
               blastRadius={blastRadius}
               onNodeClick={handleNodeClick}
+              mostRecentNodeId={mostRecentNodeId}
             />
           )}
         </main>

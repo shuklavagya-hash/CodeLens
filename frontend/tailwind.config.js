@@ -7,23 +7,23 @@ module.exports = {
     extend: {
       colors: {
         blueprint: {
-          DEFAULT: '#0B2545',   // deep blueprint navy — base background
-          deep: '#071A33',      // darker panel background
-          line: '#2C4A73',      // grid / hairline color
+          DEFAULT: '#0A0F0A',   // near-black terminal background
+          deep: '#060906',      // darker panel background
+          line: '#1A3A1A',      // grid / hairline color
         },
-        paper: '#E8F1FF',        // node fill, primary light text
-        muted: '#7C93B3',        // secondary text
-        signal: '#FF8A3D',       // blast-radius / warning amber accent
-        safe: '#5FD4A8',         // unaffected / safe accent
+        paper: '#E8FFF0',        // node fill, primary light text (soft green-white)
+        muted: '#6AAE7A',        // secondary text (dim green)
+        signal: '#4DFF88',       // accent — selection / blast-radius / interactive glow
+        safe: '#2A5A3A',         // unaffected / structural accent
       },
       fontFamily: {
-        display: ['"Space Mono"', 'ui-monospace', 'monospace'],
-        body: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
-        data: ['"Space Mono"', 'ui-monospace', 'monospace'],
+        display: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        body: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        data: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       backgroundImage: {
         'blueprint-grid':
-          'linear-gradient(rgba(197,217,241,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(197,217,241,0.06) 1px, transparent 1px)',
+          'linear-gradient(rgba(77,255,136,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(77,255,136,0.05) 1px, transparent 1px)',
       },
       backgroundSize: {
         grid: '28px 28px',

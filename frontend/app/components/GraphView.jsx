@@ -1,9 +1,25 @@
 'use client';
+// GraphView.jsx
+// =====================================================================
+// KAAM: graph (nodes + edges) ko ek pannable/zoomable SVG canvas pe
+// render karna. Node positions khud calculate nahi kar rahe — d3-force
+// ka force simulation use kar rahe hain (300 ticks chala ke ek "settled"
+// layout nikaal lete hain, phir usko static positions ki tarah use
+// karte hain — real-time simulation nahi chalti, isse render fast aur
+// predictable rehta hai).
+//
+// Pan/zoom apna khud ka simple implementation hai (d3-zoom use nahi
+// kiya) — bas ek {x, y, k} transform state, mouse drag se x/y update,
+// scroll wheel se k update.
+//
+// Selected node aur blast-radius (affected files) ko highlight karne
+// ke liye alag color/opacity use kar rahe hain (edges + nodes dono pe).
+// =====================================================================
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { forceSimulation, forceLink, forceManyBody, forceCenter, forceCollide } from 'd3-force';
 
-export default function GraphView({ graph, selectedNode, blastRadius, onNodeClick }) {
+export default function GraphView({ graph, selectedNode, blastRadius, onNodeClick, mostRecentNodeId }) {
   const containerRef = useRef(null);
   const [positions, setPositions] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -149,7 +165,7 @@ export default function GraphView({ graph, selectedNode, blastRadius, onNodeClic
                   y1={link.source.y}
                   x2={link.target.x}
                   y2={link.target.y}
-                  stroke={affected ? '#FF8A3D' : '#2C4A73'}
+                  stroke={affected ? '#4DFF88' : '#1A3A1A'}
                   strokeWidth={affected ? 2 : 1}
                   opacity={affected ? 0.9 : 0.35}
                 />
@@ -161,6 +177,7 @@ export default function GraphView({ graph, selectedNode, blastRadius, onNodeClic
             {positions.nodes.map((node) => {
               const affected = isAffected(node.id);
               const selected = isSelected(node.id);
+              const isMostRecent = mostRecentNodeId && node.id === mostRecentNodeId;
               const showLabel = showAllLabels || affected || selected;
 
               return (
@@ -176,10 +193,14 @@ export default function GraphView({ graph, selectedNode, blastRadius, onNodeClic
                   role="button"
                   aria-label={`Inspect ${node.label}`}
                 >
+                  {isMostRecent && (
+                    // Halki si glow — batata hai ye file sabse recently edit hui
+                    <circle r={selected ? 18 : 14} fill="#4DFF88" opacity={0.25} style={{ filter: 'blur(4px)' }} />
+                  )}
                   <circle
                     r={selected ? 10 : 6}
-                    fill={selected || affected ? '#FF8A3D' : '#E8F1FF'}
-                    stroke={selected ? '#FFFFFF' : '#0B2545'}
+                    fill={selected || affected ? '#4DFF88' : '#0A2A12'}
+                    stroke={selected ? '#FFFFFF' : '#4DFF88'}
                     strokeWidth={selected ? 2 : 1}
                     opacity={affected || selected ? 1 : 0.75}
                   />
@@ -190,7 +211,7 @@ export default function GraphView({ graph, selectedNode, blastRadius, onNodeClic
                       textAnchor="middle"
                       className="font-data select-none pointer-events-none"
                       fontSize={10}
-                      fill={affected || selected ? '#FF8A3D' : '#7C93B3'}
+                      fill={affected || selected ? '#4DFF88' : '#6AAE7A'}
                     >
                       {node.label}
                     </text>
